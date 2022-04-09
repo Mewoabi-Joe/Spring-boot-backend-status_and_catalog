@@ -1,0 +1,27 @@
+server:
+  address: 192.168.0.100
+
+spring:
+  data:
+    cassandra:
+      keyspace-name: status_db
+      port: 9042
+      contact-points: 127.0.0.1:9042
+      local-datacenter: datacenter1
+#      schema-action: RECREATE
+      schema-action: CREATE_IF_NOT_EXISTS
+      client:
+#        connect-timeout: 20m
+#        read-timeout: 20m
+
+  servlet:
+    multipart:
+      enabled: true
+      # Threshold after which files are written to disk.
+      #      file-size-threshold: 2KB
+      # Max file size.
+      max-file-size: 10MB
+      # Max Request Size
+      max-request-size: 10MB
+
+
