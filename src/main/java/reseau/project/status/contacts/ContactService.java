@@ -36,6 +36,7 @@ public class ContactService implements ContactInterface {
             if (!(userRepository.findById(userNumber).isPresent())) throw new BadRequestException("The user with number: " + userNumber + " does not have an account on our platform.");
 
             if (!(userRepository.findById(usersContact).isPresent())) throw new BadRequestException("The user with number: " + usersContact + " does not have an account on our platform.");
+            if(userNumber == usersContact) throw new BadRequestException("A users contact should be a different user");
             if (contact.getGivenName() == null || contact.getGivenName().trim().length() < 3) throw new BadRequestException("Your contact must have a name of atleast 3 characters");
             return contactRepository.save(contact);
     }

@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import reseau.project.status.users.User;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -34,7 +34,7 @@ public class ItemController {
             @RequestParam(required = true) MultipartFile itemImage,
             @RequestParam(required = false) String itemDescription,
             @RequestParam(required = false) double itemPrice,
-            @RequestParam(required = false) int itemRating
+            @RequestParam(required = false) double itemRating
     ) throws IOException {
 //        log.info("IN BUSINESS SERVICE ADDING BUSINESS:");
 //        log.info("userNumber: "+ item.getUserNumber() );

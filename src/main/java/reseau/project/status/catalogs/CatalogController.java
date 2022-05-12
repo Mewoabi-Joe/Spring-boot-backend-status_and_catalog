@@ -31,7 +31,7 @@ public class CatalogController {
             @RequestParam(required = false) String catalogId,
             @RequestParam(required = true) String catalogName,
             @RequestParam(required = false) String catalogDescription,
-            @RequestParam(required = true) MultipartFile firstImage
+            @RequestParam(required = true) MultipartFile firstImageUrl
     ) throws IOException {
 //        log.info("IN BUSINESS SERVICE ADDING BUSINESS:");
 //        log.info("userNumber: "+ catalog.getUserNumber() );
@@ -41,7 +41,7 @@ public class CatalogController {
 //        log.info("itemCategorie: "+ catalog.getItemCategories() );
 //        log.info("openHours: "+ catalog.getOpenHours() );
 
-        Catalog catalog = catalogService.addOneCatalogToBusiness(businessId, catalogId, catalogName, catalogDescription, firstImage);
+        Catalog catalog = catalogService.addOneCatalogToBusiness(businessId, catalogId, catalogName, catalogDescription, firstImageUrl);
 
         CatalogResponse catalogResponse = new CatalogResponse(catalog.getBusinessId().toString(), catalog.getCatalogId().toString(), catalog.getCatalogName(), catalog.getCatalogDescription(), getImageUrl(catalog.getBusinessId().toString(), catalog.getCatalogId().toString()));
         return new ResponseEntity<>(catalogResponse, HttpStatus.CREATED);

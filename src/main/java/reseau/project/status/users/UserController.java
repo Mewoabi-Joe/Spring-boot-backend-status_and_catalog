@@ -33,7 +33,8 @@ public class UserController {
                     .path(Integer.toString(user.getUserNumber()))
                     .toUriString();
 
-            UserResponse userResponse = new UserResponse(user.getUserNumber(), downloadURl, user.getUserBio(), user.getUserName(), user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
+            UserResponse userResponse = new UserResponse(user.getUserNumber(), downloadURl, user.getUserBio(),
+                    user.getUserName(), user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
             userResponses.add(userResponse);
         });
 
@@ -49,13 +50,14 @@ public class UserController {
                 .path(Integer.toString(user.getUserNumber()))
                 .toUriString();
 
-        UserResponse userResponse = new UserResponse(user.getUserNumber(), downloadURl, user.getUserBio(), user.getUserName(), user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
+        UserResponse userResponse = new UserResponse(user.getUserNumber(), downloadURl, user.getUserBio(),
+                user.getUserName(), user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     @GetMapping("/view/{userNumber}")
-    public ResponseEntity<Resource> viewFile(@PathVariable int userNumber){
+    public ResponseEntity<Resource> viewFile(@PathVariable int userNumber) {
         log.info("ARRIVED HERE ");
         User user = userService.getOneUser(userNumber);
         int fileSize = user.getUserPhoto().length;
@@ -66,13 +68,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(
-            @RequestParam("userNumber") int userNumber,
-            @RequestParam("userName") String userName,
-            @RequestParam("userPhoto") MultipartFile file,
-            @RequestParam("userBio") String userBio) throws Exception {
+    // for updating a user, pass the userName and the other params to update e.g isBusinessAccount,
+    // The service first checks if the user exist, if so, then any other non null params are modified
+    // Else if the user with that number does not exit, a new user is created
+    public ResponseEntity<UserResponse> createOrUpdateUser(
+            @RequestParam int userNumber,
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) String isBusinessAccount,
+            @RequestParam(required = false) MultipartFile userPhoto,
+            @RequestParam(required = false) String userBio) throws Exception {
 
-        User user = userService.createUser(userNumber, file, userBio, userName);
+        log.info("USERPHOTO: "+ userPhoto );
+
+        User user = userService.createUpdateUser(userNumber, userPhoto, userBio, userName , isBusinessAccount);
 //        String fileName = StringUtils.cleanPath(file.getOriginalFilename()); //Can always use if I need file name
         String downloadURl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("user/view/")
@@ -86,21 +94,23 @@ public class UserController {
 //                file.getSize(),
                 downloadURl,
                 user.getUserBio()
-        ,user.getUserName()
-        , user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
+                , user.getUserName()
+                , user.isPublicAccount(), user.isBusinessAccount(), user.getEmail());
 
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{userNumber}")
-    public ResponseEntity<UserResponse> deleteOneUser(@PathVariable int userNumber){
+    public ResponseEntity<UserResponse> deleteOneUser(@PathVariable int userNumber) {
         User deletedUser = userService.deleteOneUser(userNumber);
         String downloadURl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/user/view/")
                 .path(Integer.toString(deletedUser.getUserNumber()))
                 .toUriString();
 
-        UserResponse userResponse = new UserResponse(deletedUser.getUserNumber(), downloadURl, deletedUser.getUserBio(), deletedUser.getUserName(), deletedUser.isPublicAccount(), deletedUser.isBusinessAccount(), deletedUser.getEmail());
+        UserResponse userResponse = new UserResponse(deletedUser.getUserNumber(), downloadURl, deletedUser.getUserBio(),
+                deletedUser.getUserName(), deletedUser.isPublicAccount(), deletedUser.isBusinessAccount(),
+                deletedUser.getEmail());
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }

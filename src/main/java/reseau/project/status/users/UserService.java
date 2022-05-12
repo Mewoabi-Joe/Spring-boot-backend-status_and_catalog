@@ -32,19 +32,36 @@ public class UserService implements UserInterface {
     private UserRepository userRepository;
 
     @Override
-    public User createUser(int usersNumber, MultipartFile file, String userBio, String userName) throws Exception {
+    public User createUpdateUser(int usersNumber, MultipartFile file, String userBio, String userName, String isBusinessAccount) throws Exception {
         if (usersNumber < 600000000 || usersNumber > 700000000)
             throw new BadRequestException("Enter a valid phone number");
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String fileExtension = StringUtils.getFilenameExtension(fileName);
-        if(!(fileExtension.equalsIgnoreCase("png") || fileExtension.equalsIgnoreCase("jpg"))) throw new BadRequestException("You need to provide an image for the users photo");
+        if(file != null){ // Check this when user passes an image
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            String fileExtension = StringUtils.getFilenameExtension(fileName);
+            if(!(fileExtension.equalsIgnoreCase("png") || fileExtension.equalsIgnoreCase("jpg"))) throw new BadRequestException("You need to provide an image for the users photo");
 
-        if (fileName.contains("..")) {
-            throw new BadRequestException("Filename contains invalid path sequence "
-                    + fileName);
+            if (fileName.contains("..")) {
+                throw new BadRequestException("Filename contains invalid path sequence "
+                        + fileName);
+            }
         }
+        Optional<User> existingUser = userRepository.findById(usersNumber);
 
-        if (userRepository.findById(usersNumber).isPresent()) throw new BadRequestException("A user with that number already exist");
+        if (existingUser.isPresent()) { // Can update only isBusinessAccount for now
+            if(isBusinessAccount != null && isBusinessAccount.equalsIgnoreCase("true")){
+                existingUser.get().setBusinessAccount(true);
+                return userRepository.save(existingUser.get());
+            }else if(isBusinessAccount != null && isBusinessAccount.equalsIgnoreCase("false")){
+                existingUser.get().setBusinessAccount(false);
+                return userRepository.save(existingUser.get());
+            }else if(userBio != null){ // Here we are updating the usersBio
+                existingUser.get().setUserBio(userBio);
+                return userRepository.save(existingUser.get());
+            }else if(file != null){ //  // Here we are updating the usersphoto previously checked above
+                existingUser.get().setUserPhoto(file.getBytes());
+                return userRepository.save(existingUser.get());
+            }
+        }
 
 
         User user = new User(usersNumber, file.getBytes(), userBio, userName);

@@ -45,7 +45,7 @@ public class ItemService implements ItemInterface {
     }
 
     @Override
-    public Item addOneItemToCatalog(String catalogId, String itemId1, String itemName, MultipartFile itemImage, String itemDescription, double itemPrice, int itemRating) throws IOException {
+    public Item addOneItemToCatalog(String catalogId, String itemId1, String itemName, MultipartFile itemImage, String itemDescription, double itemPrice, double itemRating) throws IOException {
         UUID itemId;
         if (itemId1 == null) {
             itemId = Uuids.timeBased();

@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UserInterface {
-    public User createUser(int userNumber, MultipartFile file, String userBio, String userName) throws Exception;
+
+    User createUpdateUser(int usersNumber, MultipartFile file, String userBio, String userName, String isBusinessAccount) throws Exception;
 
     public User getOneUser(int userNumber);
 

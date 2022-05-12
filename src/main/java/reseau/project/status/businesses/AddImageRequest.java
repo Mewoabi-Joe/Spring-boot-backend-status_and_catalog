@@ -15,7 +15,7 @@ import java.util.UUID;
 public class AddImageRequest {
     @Positive( message = "The number should be given")
     @Min(value = 600000000, message = "A usersNumber key should be provided with a valid phone number as value")
-    private int UserNumber;
+    private int userNumber;
 
     @NotNull( message = "A businessId has to be provided in the body ")
     private UUID businessId;

@@ -36,6 +36,6 @@ public class Item {
 
     private double itemPrice;
 
-    private int itemRating;
+    private double itemRating;
 
 }

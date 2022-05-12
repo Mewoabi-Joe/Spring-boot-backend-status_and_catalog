@@ -28,21 +28,22 @@ public class Business {
     @PrimaryKeyColumn(name = "business_id", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
     private UUID businessId;
 
-    @NotEmpty( message = "A businessName has to be provided in the body ")
+    @NotEmpty( message = "Provide a business name")
     @Size( min = 3, message = "Atleast 3 characters businessName is required")
     private String businessName;
 
-    @NotEmpty( message = "A businessDescription has to be provided in the body ")
+    @NotEmpty( message = "Provide a business description")
     @Size( min = 5, message = "Atleast 5 characters businessDescription is required")
     private String businessDescription;
 
-    @NotEmpty( message = "A businessLocation has to be provided in the body ")
+    @NotEmpty( message = "Provide a business address")
     @Size( min = 5, message = "Atleast 5 characters businessLocation is required")
-    private String BusinessLocation;
+    private String businessLocation;
 
     List<String> threeImageUrls;
 
-    @NotNull( message = "Atleast an itemCategorie has to be provided in the body ")
+    @NotNull( message = "Provide atleast one item category")
+    @NotEmpty( message = "Provide atleast one item category")
     private List<String> itemCategories;
 
     private List< @Frozen HashMap<String,List<Integer>>> openHours;

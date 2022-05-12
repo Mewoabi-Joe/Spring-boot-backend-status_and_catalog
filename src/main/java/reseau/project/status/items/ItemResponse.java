@@ -14,5 +14,5 @@ public class ItemResponse {
    private String itemImage;
    private String itemDescription;
    private double itemPrice;
-   private int itemRating;
+   private double itemRating;
 }

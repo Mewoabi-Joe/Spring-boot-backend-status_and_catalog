@@ -1,5 +1,7 @@
-server:
-  address: 192.168.0.100
+#server:
+#  port: 7070
+#  address: 192.168.43.35
+#  address: 192.168.0.103
 
 spring:
   data:
@@ -20,8 +22,8 @@ spring:
       # Threshold after which files are written to disk.
       #      file-size-threshold: 2KB
       # Max file size.
-      max-file-size: 10MB
+      max-file-size: 25MB
       # Max Request Size
-      max-request-size: 10MB
+      max-request-size: 25MB
 
 

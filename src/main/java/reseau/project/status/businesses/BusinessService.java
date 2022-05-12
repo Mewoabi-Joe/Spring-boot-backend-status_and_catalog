@@ -10,6 +10,7 @@ import reseau.project.status.exceptions.BadRequestException;
 import reseau.project.status.exceptions.NotFoundException;
 import reseau.project.status.users.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -88,7 +89,23 @@ public class BusinessService implements BusinessInterface {
         Integer index = imageRequest.getArrayIndex();
         Business business = validateRowExistence(imageRequest.getUserNumber(), imageRequest.getBusinessId().toString());
         if(index == null) index = (int) Math.floor(Math.random() * 3);
-        business.getThreeImageUrls().add(index, imageRequest.getImageUrl());
+        List<String> threeImages  = new ArrayList<>();
+        List<String> gottenThreeImages = business.getThreeImageUrls();
+        if(gottenThreeImages == null){
+            threeImages.add(imageRequest.getImageUrl());
+        }else{
+            gottenThreeImages.forEach(image -> threeImages.add(image));
+            if(threeImages.size() == 1){
+                threeImages.add(imageRequest.getImageUrl());
+
+            }else if(threeImages.size() ==  2){
+                threeImages.add(imageRequest.getImageUrl());
+
+            }else{
+                threeImages.set(index,imageRequest.getImageUrl());
+            }
+        }
+        business.setThreeImageUrls(threeImages);
         return  businessRepository.save(business);
 
     }
