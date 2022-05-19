@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import reseau.project.status.businesses.Business;
 import reseau.project.status.catalogs.Catalog;
 import reseau.project.status.catalogs.CatalogResponse;
 
@@ -26,25 +27,38 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
 
+    @GetMapping
+    public ResponseEntity<List<ItemResponse>> getAllCatalogsInBusinesses(){
+        List<Item> items = itemService.getAllItemsInCatalogs();
+        List<ItemResponse> itemResponses = new ArrayList<>();
+        items.forEach(item -> {
+            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(), item.getItemPrice(),item.getItemRating() ));
+        });
+
+        return new ResponseEntity<>(itemResponses, HttpStatus.OK);
+
+    }
+
     @PostMapping
-    public ResponseEntity<ItemResponse> addOneItemToCatalog(
+    public ResponseEntity<ItemResponse> addOrUpdateACatalogItem(
             @RequestParam(required = true) String catalogId,
             @RequestParam(required = false) String itemId,
             @RequestParam(required = true) String itemName,
-            @RequestParam(required = true) MultipartFile itemImage,
+            @RequestParam(required = false) MultipartFile itemImage,
             @RequestParam(required = false) String itemDescription,
             @RequestParam(required = false) double itemPrice,
             @RequestParam(required = false) double itemRating
     ) throws IOException {
-//        log.info("IN BUSINESS SERVICE ADDING BUSINESS:");
-//        log.info("userNumber: "+ item.getUserNumber() );
-//        log.info("itemName: "+ item.getItemName() );
-//        log.info("itemDescription: "+ item.getDescription() );
-//        log.info("location: "+ item.getLocation() );
-//        log.info("itemCategorie: "+ item.getItemCategories() );
-//        log.info("openHours: "+ item.getOpenHours() );
+        log.info("IN ITEM CONTROLLER ADDORUPDATE ITEM:");
+        log.info("catalogId: "+ catalogId);
+        log.info("itemId: "+ itemId);
+        log.info("itemName: "+ itemName );
+        log.info("itemImage: "+ itemImage );
+        log.info("itemDescription: "+ itemDescription);
+        log.info("itemPrice: "+itemPrice);
+        log.info("itemRating: "+itemRating);
 
-        Item item = itemService.addOneItemToCatalog(catalogId, itemId, itemName, itemImage, itemDescription, itemPrice, itemRating);
+        Item item = itemService.addOrUpdateACatalogItem(catalogId, itemId, itemName, itemImage, itemDescription, itemPrice, itemRating);
 
         ItemResponse itemResponse = new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(), item.getItemPrice(),item.getItemRating() );
         return new ResponseEntity<>(itemResponse, HttpStatus.CREATED);

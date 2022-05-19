@@ -65,12 +65,19 @@ public class BusinessController {
         return new ResponseEntity<>(business,HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete_image")
+    public ResponseEntity<Business> deleteImageFromBusiness(@RequestBody DeleteImageRequest imageRequest){
+        Business business = businessService.deleteImageFromBusiness(imageRequest);
+        return new ResponseEntity<>(business,HttpStatus.OK);
+    }
+
     public String getImageUrl(String userNumber, String businessId, String imageNumber){
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("business/view_image/")
                 .path(userNumber)
                 .toUriString()+"?businessId=" + businessId + "&imageNumber=" + imageNumber;
     }
+
 
 
 }

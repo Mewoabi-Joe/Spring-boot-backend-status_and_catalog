@@ -25,23 +25,33 @@ public class CatalogController {
     @Autowired
     private CatalogService catalogService;
 
+    @GetMapping
+    public ResponseEntity<List<CatalogResponse>> getAllCatalogsInBusinesses(){
+        List<Catalog> catalogs = catalogService.getAllCatalogsInBusinesses();
+        List<CatalogResponse> catalogResponses = new ArrayList<>();
+        catalogs.forEach(catalog -> {
+            catalogResponses.add(new CatalogResponse(catalog.getBusinessId().toString(), catalog.getCatalogId().toString(),catalog.getCatalogName(),catalog.getCatalogDescription(),getImageUrl(catalog.getBusinessId().toString(), catalog.getCatalogId().toString())));
+        });
+
+        return new ResponseEntity<>(catalogResponses, HttpStatus.OK);
+    }
+
     @PostMapping
-    public ResponseEntity<CatalogResponse> addOneCatalogToBusiness(
+    public ResponseEntity<CatalogResponse> addOrUpdateABusinessCatalog(
             @RequestParam(required = true) String businessId,
             @RequestParam(required = false) String catalogId,
             @RequestParam(required = true) String catalogName,
             @RequestParam(required = false) String catalogDescription,
-            @RequestParam(required = true) MultipartFile firstImageUrl
+            @RequestParam(required = false) MultipartFile firstImageUrl
     ) throws IOException {
-//        log.info("IN BUSINESS SERVICE ADDING BUSINESS:");
-//        log.info("userNumber: "+ catalog.getUserNumber() );
-//        log.info("catalogName: "+ catalog.getCatalogName() );
-//        log.info("catalogDescription: "+ catalog.getDescription() );
-//        log.info("location: "+ catalog.getLocation() );
-//        log.info("itemCategorie: "+ catalog.getItemCategories() );
-//        log.info("openHours: "+ catalog.getOpenHours() );
+        log.info("CATALOG CREATE OR UPDATE:");
+        log.info("businessId: "+ businessId );
+        log.info("catalogId: "+ catalogId );
+        log.info("catalogName: "+catalogName);
+        log.info("catalogDescription: "+ catalogDescription);
+        log.info("firstImageUrl: "+ firstImageUrl );
 
-        Catalog catalog = catalogService.addOneCatalogToBusiness(businessId, catalogId, catalogName, catalogDescription, firstImageUrl);
+        Catalog catalog = catalogService.addOrUpdateABusinessCatalog(businessId, catalogId, catalogName, catalogDescription, firstImageUrl);
 
         CatalogResponse catalogResponse = new CatalogResponse(catalog.getBusinessId().toString(), catalog.getCatalogId().toString(), catalog.getCatalogName(), catalog.getCatalogDescription(), getImageUrl(catalog.getBusinessId().toString(), catalog.getCatalogId().toString()));
         return new ResponseEntity<>(catalogResponse, HttpStatus.CREATED);

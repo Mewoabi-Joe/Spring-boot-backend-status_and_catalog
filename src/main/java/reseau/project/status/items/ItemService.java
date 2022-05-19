@@ -45,12 +45,27 @@ public class ItemService implements ItemInterface {
     }
 
     @Override
-    public Item addOneItemToCatalog(String catalogId, String itemId1, String itemName, MultipartFile itemImage, String itemDescription, double itemPrice, double itemRating) throws IOException {
+    public Item addOrUpdateACatalogItem(String catalogId, String itemId1, String itemName, MultipartFile itemImage, String itemDescription, double itemPrice, double itemRating) throws IOException {
         UUID itemId;
-        if (itemId1 == null) {
+        System.out.println("itemId1: "+ itemId1);
+        if (itemId1 == null || itemId1.isEmpty()) {
+            if(itemImage == null){
+                throw new BadRequestException("provide an image for the Item");
+            }
             itemId = Uuids.timeBased();
         } else {
-            itemId = UUID.fromString(itemId1);
+            Optional<Item> existingItem =  itemRepository.findByCatalogIdAndItemId(UUID.fromString(catalogId), UUID.fromString(itemId1));
+            if(existingItem.isPresent()){
+                Item theItem = existingItem.get();
+                theItem.setItemDescription(itemDescription);
+                theItem.setItemName(itemName);
+                theItem.setItemPrice(itemPrice);
+                theItem.setItemRating(itemRating);
+                if(itemImage != null) theItem.setItemImage(itemImage.getBytes());
+                return itemRepository.save(theItem);
+            }else{
+                throw new BadRequestException("No business with that Id has a catalog with that ID");
+            }
         }
         return itemRepository.save(new Item(UUID.fromString(catalogId), itemId, itemName, itemImage.getBytes(), itemDescription, itemPrice, itemRating));
     }
@@ -60,6 +75,11 @@ public class ItemService implements ItemInterface {
         Item item = validateSequenceCatalogAndItemId(UUID.fromString(catalogId), UUID.fromString(itemId));
         itemRepository.deleteByCatalogIdAndItemId(UUID.fromString(catalogId), UUID.fromString(itemId));
         return item;
+    }
+
+    @Override
+    public List<Item> getAllItemsInCatalogs() {
+        return itemRepository.findAll();
     }
 
     public void validateCatalogId(UUID catalogId){
@@ -77,4 +97,6 @@ public class ItemService implements ItemInterface {
         return validateCatalogAndItemId(catalogId,itemId);
     }
 
+//    public List<Item> getAllCatalogsAndTheirItems() {
+//    }
 }

@@ -11,4 +11,5 @@ public interface BusinessInterface {
     public Business deleteAUsersBusiness(int userNumber, String businessId);
 
     Business addImageToBusiness(AddImageRequest imageRequest);
+    Business deleteImageFromBusiness(DeleteImageRequest imageRequest);
 }

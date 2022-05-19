@@ -13,5 +13,6 @@ public interface ItemRepository extends CassandraRepository<Item, UUID> {
     List<Item> findAllByCatalogId(UUID categoryId);
     List<Item> findByCatalogId(UUID categoryId);
     void deleteByCatalogIdAndItemId(UUID fromString, UUID fromString1);
+    void deleteByCatalogId(UUID fromString);
 
 }

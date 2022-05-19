@@ -9,7 +9,9 @@ import java.util.List;
 public interface CatalogInterface {
    public List<Catalog> getAllCatalogsOfABusiness(String businessId);
 public Catalog getCatalogByBusinessAndCatalogId(String businessId, String catalogId);
-   public Catalog addOneCatalogToBusiness(String catalogId, String catalogId1, String catalogName, String catalogDescription, MultipartFile firstImage) throws IOException;
+   public Catalog addOrUpdateABusinessCatalog(String catalogId, String catalogId1, String catalogName, String catalogDescription, MultipartFile firstImage) throws IOException;
 
     Catalog deleteCatalogOfBusiness(String businessId, String catalogId);
+
+    List<Catalog> getAllCatalogsInBusinesses();
 }

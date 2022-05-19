@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import reseau.project.status.businesses.Business;
 import reseau.project.status.exceptions.BadRequestException;
 import reseau.project.status.exceptions.NotFoundException;
+import reseau.project.status.items.ItemRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +23,9 @@ import java.util.UUID;
 public class CatalogService implements CatalogInterface {
     @Autowired
     private CatalogRepository catalogRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Override
     public List<Catalog> getAllCatalogsOfABusiness(String businessId) {
@@ -45,12 +49,24 @@ public class CatalogService implements CatalogInterface {
     }
 
     @Override
-    public Catalog addOneCatalogToBusiness(String businessId, String catalogId1, String catalogName, String catalogDescription, MultipartFile firstImage) throws IOException {
+    public Catalog addOrUpdateABusinessCatalog(String businessId, String catalogId1, String catalogName, String catalogDescription, MultipartFile firstImage) throws IOException {
         UUID catalogId;
         if(catalogId1 == null){
+            if(firstImage == null){
+                throw new BadRequestException("provide an image for the catalog");
+            }
             catalogId = Uuids.timeBased();
         }else{
-            catalogId = UUID.fromString(catalogId1);
+           Optional<Catalog> existingCatalog =  catalogRepository.findByBusinessIdAndCatalogId(UUID.fromString(businessId), UUID.fromString(catalogId1));
+           if(existingCatalog.isPresent()){
+               Catalog theCatalog = existingCatalog.get();
+               theCatalog.setCatalogDescription(catalogDescription);
+               theCatalog.setCatalogName(catalogName);
+               if(firstImage != null) theCatalog.setFirstImage(firstImage.getBytes());
+               return catalogRepository.save(theCatalog);
+           }else{
+               throw new BadRequestException("No business with that Id has a catalog with that ID");
+           }
         }
         return catalogRepository.save(new Catalog(UUID.fromString(businessId),catalogId, catalogName, firstImage.getBytes(),catalogDescription ));
     }
@@ -73,7 +89,13 @@ public class CatalogService implements CatalogInterface {
     @Override
     public Catalog deleteCatalogOfBusiness(String businessId, String catalogId) {
         Catalog catalog = validateSequenceBusinessAndCatalogId(UUID.fromString(businessId), UUID.fromString(catalogId));
+        itemRepository.deleteByCatalogId(UUID.fromString(catalogId));
         catalogRepository.deleteByBusinessIdAndCatalogId(UUID.fromString(businessId), UUID.fromString(catalogId));
         return catalog;
+    }
+
+    @Override
+    public List<Catalog> getAllCatalogsInBusinesses() {
+        return catalogRepository.findAll();
     }
 }
