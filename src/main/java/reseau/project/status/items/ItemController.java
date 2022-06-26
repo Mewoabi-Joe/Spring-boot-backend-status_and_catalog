@@ -28,11 +28,23 @@ public class ItemController {
     private ItemService itemService;
 
     @GetMapping
-    public ResponseEntity<List<ItemResponse>> getAllCatalogsInBusinesses(){
+    public ResponseEntity<List<ItemResponse>> getAllItemsInCatalogs() {
         List<Item> items = itemService.getAllItemsInCatalogs();
         List<ItemResponse> itemResponses = new ArrayList<>();
         items.forEach(item -> {
-            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(), item.getItemPrice(),item.getItemRating() ));
+            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(), getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()), item.getItemDescription(), item.getItemPrice(), item.getItemRating()));
+        });
+
+        return new ResponseEntity<>(itemResponses, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/six_items")
+    public ResponseEntity<List<ItemResponse>> getSixCatalogItems() {
+        List<Item> items = itemService.getRandomSixItemsInCatalogs();
+        List<ItemResponse> itemResponses = new ArrayList<>();
+        items.forEach(item -> {
+            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(), getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()), item.getItemDescription(), item.getItemPrice(), item.getItemRating()));
         });
 
         return new ResponseEntity<>(itemResponses, HttpStatus.OK);
@@ -50,17 +62,17 @@ public class ItemController {
             @RequestParam(required = false) double itemRating
     ) throws IOException {
         log.info("IN ITEM CONTROLLER ADDORUPDATE ITEM:");
-        log.info("catalogId: "+ catalogId);
-        log.info("itemId: "+ itemId);
-        log.info("itemName: "+ itemName );
-        log.info("itemImage: "+ itemImage );
-        log.info("itemDescription: "+ itemDescription);
-        log.info("itemPrice: "+itemPrice);
-        log.info("itemRating: "+itemRating);
+        log.info("catalogId: " + catalogId);
+        log.info("itemId: " + itemId);
+        log.info("itemName: " + itemName);
+        log.info("itemImage: " + itemImage);
+        log.info("itemDescription: " + itemDescription);
+        log.info("itemPrice: " + itemPrice);
+        log.info("itemRating: " + itemRating);
 
         Item item = itemService.addOrUpdateACatalogItem(catalogId, itemId, itemName, itemImage, itemDescription, itemPrice, itemRating);
 
-        ItemResponse itemResponse = new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(), item.getItemPrice(),item.getItemRating() );
+        ItemResponse itemResponse = new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(), getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()), item.getItemDescription(), item.getItemPrice(), item.getItemRating());
         return new ResponseEntity<>(itemResponse, HttpStatus.CREATED);
     }
 
@@ -81,21 +93,21 @@ public class ItemController {
                 .body(byteArrayResource);
     }
 
-    public String getImageUrl(String catalogId, String itemId ){
+    public String getImageUrl(String catalogId, String itemId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("item/view_image/")
                 .path(catalogId)
-                .toUriString()+"?itemId=" + itemId;
+                .toUriString() + "?itemId=" + itemId;
     }
 
     @GetMapping("/{catalogId}")
     public ResponseEntity<List<ItemResponse>> getAllItemsOfACatalog(
             @PathVariable String catalogId
-    ){
+    ) {
         List<Item> items = itemService.getAllItemsOfACatalog(catalogId);
         List<ItemResponse> itemResponses = new ArrayList<>();
         items.forEach(item -> {
-            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(), item.getItemPrice(),item.getItemRating() ));
+            itemResponses.add(new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(), getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()), item.getItemDescription(), item.getItemPrice(), item.getItemRating()));
         });
 
         return new ResponseEntity<>(itemResponses, HttpStatus.OK);
@@ -103,12 +115,12 @@ public class ItemController {
 
     @DeleteMapping("/{catalogId}")
     public ResponseEntity<ItemResponse> deleteABusinessItem(@PathVariable String catalogId,
-                                                                  @RequestParam String itemId){
+                                                            @RequestParam String itemId) {
         log.info("ARRIVED HERE In Delete : catalogId: " + catalogId + " itemId: " + itemId);
 
         Item item = itemService.deleteItemOfCatalog(catalogId, itemId);
 
-        ItemResponse itemResponse = new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(),getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()),item.getItemDescription(),item.getItemPrice(),item.getItemRating() );
+        ItemResponse itemResponse = new ItemResponse(item.getCatalogId().toString(), item.getItemId().toString(), item.getItemName(), getImageUrl(item.getCatalogId().toString(), item.getItemId().toString()), item.getItemDescription(), item.getItemPrice(), item.getItemRating());
         return new ResponseEntity<>(itemResponse, HttpStatus.OK);
 
     }

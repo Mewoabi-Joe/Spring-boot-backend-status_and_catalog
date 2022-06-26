@@ -15,4 +15,6 @@ public interface ItemInterface {
     Item deleteItemOfCatalog(String catalogId, String itemId);
 
     List<Item> getAllItemsInCatalogs();
+
+    List<Item> getRandomSixItemsInCatalogs();
 }

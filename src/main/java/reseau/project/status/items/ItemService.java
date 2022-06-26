@@ -12,6 +12,7 @@ import reseau.project.status.exceptions.BadRequestException;
 import reseau.project.status.exceptions.NotFoundException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,6 +81,14 @@ public class ItemService implements ItemInterface {
     @Override
     public List<Item> getAllItemsInCatalogs() {
         return itemRepository.findAll();
+    }
+
+    @Override
+    public List<Item> getRandomSixItemsInCatalogs() {
+        List<Item> allItems = itemRepository.findAll();
+        Collections.shuffle(allItems);
+        List<Item> sixItems = allItems.subList(0, 12);
+        return sixItems;
     }
 
     public void validateCatalogId(UUID catalogId){

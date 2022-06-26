@@ -51,7 +51,7 @@ public class CatalogService implements CatalogInterface {
     @Override
     public Catalog addOrUpdateABusinessCatalog(String businessId, String catalogId1, String catalogName, String catalogDescription, MultipartFile firstImage) throws IOException {
         UUID catalogId;
-        if(catalogId1 == null){
+        if(catalogId1 == null || catalogId1.equalsIgnoreCase("")){
             if(firstImage == null){
                 throw new BadRequestException("provide an image for the catalog");
             }
